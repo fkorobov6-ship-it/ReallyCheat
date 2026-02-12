@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "reallyworld",
+  "version": "1.0.0",
+  "name": "ReallyWorld Client",
+  "description": "Advanced utility mod for ReallyWorld server",
+  "authors": ["User2281337"],
+  "contact": {},
+  "license": "All Rights Not Right",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ru.reallyworld.client.ReallyWorldMod"
+    ]
+  },
+  "mixins": [
+    "reallyworld.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric": "*",
+    "minecraft": "1.8.9"
+  }
+}
