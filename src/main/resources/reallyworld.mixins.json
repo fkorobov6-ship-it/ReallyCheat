@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ru.reallyworld.client.injection.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [
+    "MixinClientConnection",
+    "MixinEntityPlayerSP",
+    "MixinNetworkManager",
+    "MixinPlayerControllerMP",
+    "MixinMinecraft"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
