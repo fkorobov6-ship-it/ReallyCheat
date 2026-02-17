@@ -1,0 +1,195 @@
+{
+  "name": "Matrix Optimized",
+  "version": "1.0",
+  "anticheat": "Matrix",
+  "settings": {
+    "combat": {
+      "killaura": {
+        "enabled": true,
+        "mode": "MULTI",
+        "cps": 14,
+        "range": 3.9,
+        "throughWalls": false,
+        "priority": "DISTANCE",
+        "autoblock": true,
+        "players": true,
+        "mobs": false,
+        "invisibles": false,
+        "delay": {
+          "min": 45,
+          "max": 85,
+          "randomization": true
+        }
+      },
+      "reach": {
+        "enabled": true,
+        "distance": 3.45,
+        "mode": "PACKET",
+        "compatibility": "matrix"
+      },
+      "aimbot": {
+        "enabled": true,
+        "smoothness": 45,
+        "fov": 90,
+        "silent": true,
+        "priority": "HEALTH"
+      },
+      "criticals": {
+        "enabled": true,
+        "mode": "JUMP",
+        "chance": 95
+      },
+      "antikb": {
+        "enabled": true,
+        "horizontal": 75,
+        "vertical": 85,
+        "mode": "PACKET"
+      }
+    },
+    "movement": {
+      "fly": {
+        "enabled": true,
+        "mode": "PACKET_SPAM",
+        "speed": 0.8,
+        "glide": false,
+        "bypass": "matrix_safe"
+      },
+      "speed": {
+        "enabled": true,
+        "mode": "STRAFE",
+        "speed": 5.2,
+        "jump": true,
+        "bypass": "matrix"
+      },
+      "jesus": {
+        "enabled": false,
+        "mode": "NCP",
+        "bypass": "matrix"
+      },
+      "step": {
+        "enabled": true,
+        "height": 1.5,
+        "mode": "INSTANT"
+      },
+      "noslow": {
+        "enabled": true,
+        "mode": "PACKET",
+        "items": true,
+        "blocks": true,
+        "bows": true
+      }
+    },
+    "visuals": {
+      "esp": {
+        "enabled": true,
+        "mode": "BOX_2D",
+        "health": true,
+        "nametags": true,
+        "distance": true,
+        "armor": true,
+        "color": {
+          "player": "RED",
+          "friend": "GREEN",
+          "enemy": "ORANGE"
+        },
+        "throughWalls": true
+      },
+      "tracers": {
+        "enabled": true,
+        "mode": "LINE",
+        "color": "RAINBOW",
+        "thickness": 1.5
+      },
+      "xray": {
+        "enabled": false,
+        "mode": "ORES",
+        "blocks": ["diamond_ore", "emerald_ore", "gold_ore"]
+      },
+      "fullbright": {
+        "enabled": true,
+        "gamma": 100,
+        "mode": "GAMMA"
+      }
+    },
+    "world": {
+      "scaffold": {
+        "enabled": false,
+        "mode": "NORMAL",
+        "tower": true,
+        "expand": 1,
+        "safeWalk": true
+      },
+      "fastbreak": {
+        "enabled": true,
+        "speed": 1.5,
+        "mode": "PACKET"
+      },
+      "fastplace": {
+        "enabled": true,
+        "delay": 0,
+        "mode": "INSTANT"
+      },
+      "timer": {
+        "enabled": false,
+        "speed": 1.2,
+        "mode": "BALANCED"
+      }
+    },
+    "automation": {
+      "autoclicker": {
+        "enabled": true,
+        "cps": 12,
+        "mode": "LMB",
+        "randomize": true,
+        "blockhit": true
+      },
+      "autopot": {
+        "enabled": true,
+        "health": 12,
+        "potions": ["health", "speed", "strength"],
+        "delay": 100
+      },
+      "autodisconnect": {
+        "enabled": true,
+        "health": 6,
+        "onStaff": true,
+        "onFlag": true
+      }
+    },
+    "bypass": {
+      "matrix": {
+        "fly": "packet_spam",
+        "speed": "strafe",
+        "reach": 3.4,
+        "killaura": "balanced"
+      },
+      "packet": {
+        "transaction": true,
+        "keepalive": true,
+        "position": true,
+        "delay": 20
+      },
+      "spoof": {
+        "client": "vanilla",
+        "brand": "vanilla",
+        "hwid": true
+      }
+    },
+    "security": {
+      "antiscreenshare": true,
+      "panicKey": "F12",
+      "hideOnFlag": true,
+      "autoDisable": true
+    },
+    "gui": {
+      "theme": "DARK",
+      "clickgui": true,
+      "hud": true,
+      "arraylist": true,
+      "watermark": true,
+      "coords": true,
+      "fps": true,
+      "ping": true
+    }
+  }
+}
