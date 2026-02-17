@@ -1,0 +1,277 @@
+package ru.reallycheat.core.security;
+
+import java.io.*;
+import java.util.*;
+import com.sun.jna.*;
+import com.sun.jna.platform.win32.*;
+
+public class AntiScreenShare {
+    private static AntiScreenShare instance;
+    private boolean hidden = false;
+    private List<File> cheatFiles = new ArrayList<>();
+    private List<String> cheatProcesses = Arrays.asList(
+        "reallycheat", "cheatengine", "artifact", "injector"
+    );
+    private PanicButton panicButton;
+    
+    public static AntiScreenShare getInstance() {
+        if (instance == null) {
+            instance = new AntiScreenShare();
+        }
+        return instance;
+    }
+    
+    public void init() {
+        // Определение критических файлов
+        findCheatFiles();
+        
+        // Инициализация аварийной кнопки
+        panicButton = new PanicButton(PanicKey.F12);
+        
+        // Запуск мониторинга
+        startMonitoring();
+    }
+    
+    private void findCheatFiles() {
+        String basePath = new File("").getAbsolutePath();
+        
+        // Поиск файлов чита
+        findFiles(new File(basePath), ".jar");
+        findFiles(new File(basePath), ".dll");
+        findFiles(new File(basePath), ".exe");
+        findFiles(new File(basePath), ".class");
+    }
+    
+    private void findFiles(File dir, String extension) {
+        if (!dir.exists() || !dir.isDirectory()) return;
+        
+        File[] files = dir.listFiles();
+        if (files == null) return;
+        
+        for (File file : files) {
+            if (file.isDirectory()) {
+                findFiles(file, extension);
+            } else if (file.getName().toLowerCase().contains("reallycheat") ||
+                       file.getName().toLowerCase().contains("cheat")) {
+                cheatFiles.add(file);
+            }
+        }
+    }
+    
+    private void startMonitoring() {
+        // Мониторинг процессов проверки
+        Thread monitor = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                    
+                    // Проверка на наличие ScreenShare инструментов
+                    if (isScreenShareDetected()) {
+                        activatePanic();
+                    }
+                    
+                    // Проверка на нажатие панической кнопки
+                    if (panicButton.isPressed()) {
+                        activatePanic();
+                    }
+                    
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        monitor.setDaemon(true);
+        monitor.start();
+    }
+    
+    private boolean isScreenShareDetected() {
+        // Проверка процессов
+        if (isProcessRunning("TeamViewer.exe") ||
+            isProcessRunning("AnyDesk.exe") ||
+            isProcessRunning("Ammyy.exe") ||
+            isProcessRunning("Discord.exe") && isScreenShareActive()) {
+            return true;
+        }
+        
+        // Проверка на запись экрана
+        if (isScreenRecording()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private boolean isProcessRunning(String processName) {
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            try {
+                Process process = Runtime.getRuntime().exec("tasklist");
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+                
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains(processName)) {
+                        return true;
+                    }
+                }
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    
+    private boolean isScreenShareActive() {
+        // Проверка через Discord API
+        // Заглушка - реальная реализация сложнее
+        return false;
+    }
+    
+    private boolean isScreenRecording() {
+        // Проверка на активность софта для записи
+        return isProcessRunning("OBS.exe") ||
+               isProcessRunning("XSplit.exe") ||
+               isProcessRunning("Fraps.exe");
+    }
+    
+    private void activatePanic() {
+        if (hidden) return;
+        
+        System.out.println("[PANIC] Активация режима скрытия!");
+        
+        // Скрытие окон
+        hideWindows();
+        
+        // Очистка файлов
+        cleanupFiles();
+        
+        // Очистка памяти
+        clearMemory();
+        
+        // Деактивация всех модулей
+        disableAllModules();
+        
+        // Скрытие процесса
+        hideProcess();
+        
+        hidden = true;
+    }
+    
+    private void hideWindows() {
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            // Скрытие консольного окна
+            Kernel32.INSTANCE.FreeConsole();
+            
+            // Скрытие главного окна
+            hideWindow(getMainWindowHandle());
+        }
+    }
+    
+    private void hideWindow(Pointer handle) {
+        if (handle != null) {
+            User32.INSTANCE.ShowWindow(handle, User32.SW_HIDE);
+        }
+    }
+    
+    private Pointer getMainWindowHandle() {
+        // Получение handle главного окна
+        return User32.INSTANCE.FindWindow(null, "Minecraft 1.8.9");
+    }
+    
+    private void cleanupFiles() {
+        for (File file : cheatFiles) {
+            if (file.exists()) {
+                // Переименование
+                File renamed = new File(file.getParent(), 
+                    "system_" + System.currentTimeMillis() + ".tmp");
+                file.renameTo(renamed);
+                
+                // Удаление через некоторое время
+                renamed.deleteOnExit();
+            }
+        }
+        
+        // Очистка временных файлов
+        cleanupTempFiles();
+    }
+    
+    private void cleanupTempFiles() {
+        File tempDir = new File(System.getProperty("java.io.tmpdir"));
+        File[] files = tempDir.listFiles((dir, name) -> 
+            name.contains("reallycheat") || name.contains("cheat"));
+        
+        if (files != null) {
+            for (File file : files) {
+                file.delete();
+            }
+        }
+    }
+    
+    private void clearMemory() {
+        // Очистка чувствительных данных из памяти
+        System.gc();
+        System.runFinalization();
+        
+        // Затирание ключевых переменных
+        // Реальная реализация через JNI сложнее
+    }
+    
+    private void disableAllModules() {
+        // Деактивация через ModuleManager
+        // ru.reallycheat.modules.ModuleManager.getInstance().disableAll();
+    }
+    
+    private void hideProcess() {
+        // Скрытие процесса через JNI
+        // Заглушка - требует нативной реализации
+    }
+    
+    private class PanicButton {
+        private PanicKey key;
+        private boolean lastState = false;
+        
+        public PanicButton(PanicKey key) {
+            this.key = key;
+        }
+        
+        public boolean isPressed() {
+            boolean current = isKeyDown(key);
+            boolean pressed = current && !lastState;
+            lastState = current;
+            return pressed;
+        }
+        
+        private boolean isKeyDown(PanicKey key) {
+            // Проверка нажатия клавиши
+            return Keyboard.isKeyDown(key.getKeyCode());
+        }
+    }
+    
+    private enum PanicKey {
+        F12(123), END(35), PAUSE(19);
+        
+        private int keyCode;
+        
+        PanicKey(int keyCode) {
+            this.keyCode = keyCode;
+        }
+        
+        public int getKeyCode() {
+            return keyCode;
+        }
+    }
+}
+
+// Интерфейсы для JNA
+interface User32 extends com.sun.jna.platform.win32.User32 {
+    User32 INSTANCE = Native.load("user32", User32.class);
+    int SW_HIDE = 0;
+    boolean ShowWindow(Pointer hWnd, int nCmdShow);
+    Pointer FindWindow(String lpClassName, String lpWindowName);
+}
+
+interface Kernel32 extends com.sun.jna.platform.win32.Kernel32 {
+    Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class);
+    boolean FreeConsole();
+}
